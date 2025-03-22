@@ -1,2 +1,2 @@
-# HashMap
-implement own Map
+# OwnHashMap
+implement own OwnMap
