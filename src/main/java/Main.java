@@ -1,6 +1,8 @@
+import java.util.Map;
+
 public class Main {
     public static void main(String[] args) {
-        OwnMap<String, String> ownMap = new OwnHashMap<>();
+        Map<String, String> ownMap = new OwnHashMap<>();
 
         ownMap.put("Key", "Value");
         ownMap.put("Key", "Nice");
