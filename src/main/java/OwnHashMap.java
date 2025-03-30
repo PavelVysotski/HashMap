@@ -3,30 +3,47 @@ import java.util.*;
 public class OwnHashMap<K, V> implements Map<K, V> {
 
     public final int DEFAULT_BUCKET_SIZE = 16;
+    public final double LOAD_FACTOR = 0.75;
 
     public List<Bucket> buckets;
+    public int size;
 
     public OwnHashMap() {
         this.buckets = new ArrayList<>();
         for (int i = 0; i < DEFAULT_BUCKET_SIZE; i++) {
             buckets.add(i, new Bucket());
         }
+        size = 0;
     }
 
     @Override
     public V put(K key, V value) {
-        Entry entry = new Entry(key, value);
+        if ((double) size / buckets.size() > LOAD_FACTOR) {
+            //TODO: add resize map
+        }
+            Entry entry = new Entry(key, value);
         int bucketIndex = getBucketIndex(key);
         if (bucketIndex < 0 || bucketIndex > DEFAULT_BUCKET_SIZE) {
             throw new Error("Out of bound");
         }
         Bucket matchBucket = buckets.get(bucketIndex);
         matchBucket.add(entry);
-        return null;
+        size++;
+        return value;
     }
 
     @Override
     public V remove(Object key) {
+        int index = getBucketIndex(key);
+        Entry entry = buckets.get(index).get(key);
+
+        if (entry != null && Objects.equals(entry.getKey(), key)) {
+            V value = entry.getValue();
+            buckets.add(null);
+            size--;
+            return value;
+        }
+
         return null;
     }
 
@@ -91,7 +108,6 @@ public class OwnHashMap<K, V> implements Map<K, V> {
     }
 
     public class Bucket {
-
         List<Entry> entryList = new LinkedList<>();
 
         public void add(Entry entry) {
@@ -99,6 +115,7 @@ public class OwnHashMap<K, V> implements Map<K, V> {
             if (get(entry.key) != null) {
 
                 entryList.remove(existEntry);
+                size--;
             }
             entryList.add(entry);
         }
@@ -121,6 +138,14 @@ public class OwnHashMap<K, V> implements Map<K, V> {
         public Entry(K key, V value) {
             this.key = key;
             this.value = value;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
         }
     }
 }
